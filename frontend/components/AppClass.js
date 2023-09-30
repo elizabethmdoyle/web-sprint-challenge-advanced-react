@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 // Suggested initial states
 const initialMessage = ''
@@ -10,26 +10,51 @@ const initialState = {
   message: initialMessage,
   email: initialEmail,
   index: initialIndex,
-  steps: initialSteps,
+  steps: initialSteps
+  
 }
+
+const URL = 'http://localhost:9000/api/result';
 
 export default class AppClass extends React.Component {
   // THE FOLLOWING HELPERS ARE JUST RECOMMENDATIONS.
   // You can delete them and build your own logic from scratch.
+  constructor() {
+    super();
+    
+  }
+ 
+ 
 
-  getXY = () => {
+  getXY = (x, y) => {
     // It it not necessary to have a state to track the coordinates.
     // It's enough to know what index the "B" is at, to be able to calculate them.
+    
+    //if B is a number 0 - 8, need to find B, and verify which set of numbers it should belong to...?
+    //each instance of B will provide a number 0, 1, or 2, and depending on which row of the grid will determine
+    // whether it is 0, 1, or 2...
+    //xxxxBxxxx would be 5, but would return a 1.....? need to understand coding the logic
+    //xxBxxxxxx would be 2
+    //must be an index 0-8
+    
+    
+    if(x <= 2 && y <= 2 ) {
+      return (x, y)
+    } else return 0;
   }
 
-  getXYMessage = () => {
+  getXYMessage = (x, y) => {
     // It it not necessary to have a state to track the "Coordinates (2, 2)" message for the user.
     // You can use the `getXY` helper above to obtain the coordinates, and then `getXYMessage`
     // returns the fully constructed string.
+
+    this.getXY(x, y);
+    return `Coordinates ${x}, ${y}`
   }
 
   reset = () => {
     // Use this helper to reset all states to their initial values.
+    this.setState(initialState);
   }
 
   getNextIndex = (direction) => {
@@ -43,12 +68,24 @@ export default class AppClass extends React.Component {
     // and change any states accordingly.
   }
 
-  onChange = (evt) => {
+  onChange = (e) => {
     // You will need this to update the value of the input.
+    // const {value} = e.target
+    // this.setState(...this.state, [e.target.name]: value);
   }
 
   onSubmit = (evt) => {
     // Use a POST request to send a payload to the server.
+   // e.preventDefault();
+    // axios.post(URL);
+    //       .then(res => {
+    //         console.log(res.data)
+    //        { }
+    //
+    //       })
+    //       .catch(err => {
+    //         return console.log(`Error: `, err)
+    //       })
   }
 
   render() {
@@ -78,8 +115,8 @@ export default class AppClass extends React.Component {
           <button id="down">DOWN</button>
           <button id="reset">reset</button>
         </div>
-        <form>
-          <input id="email" type="email" placeholder="type email"></input>
+        <form  >
+          <input id="email" name="email" type="email" placeholder="type email" onChange={this.onChange}></input>
           <input id="submit" type="submit"></input>
         </form>
       </div>
