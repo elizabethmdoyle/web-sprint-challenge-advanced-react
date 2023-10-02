@@ -26,7 +26,7 @@ export default class AppClass extends React.Component {
  
  
 
-  getXY = (x, y) => {
+  getXY = () => {
     // It it not necessary to have a state to track the coordinates.
     // It's enough to know what index the "B" is at, to be able to calculate them.
     
@@ -70,8 +70,8 @@ export default class AppClass extends React.Component {
 
   onChange = (e) => {
     // You will need this to update the value of the input.
-    // const {value} = e.target
-    // this.setState(...this.state, [e.target.name]: value);
+    const {value} = e.target;
+    this.setState(...this.state, [e.target.name]: value);
   }
 
   onSubmit = (evt) => {
