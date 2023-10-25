@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 // Suggested initial states
 const initialMessage = ''
@@ -6,7 +7,7 @@ const initialEmail = ''
 const initialSteps = 0
 const initialIndex = 4 // the index the "B" is at
 
-const initialState = {
+const state = {
   message: initialMessage,
   email: initialEmail,
   index: initialIndex,
@@ -26,7 +27,7 @@ export default class AppClass extends React.Component {
  
  
 
-  getXY = () => {
+  getXY = (arr) => {
     // It it not necessary to have a state to track the coordinates.
     // It's enough to know what index the "B" is at, to be able to calculate them.
     
@@ -37,18 +38,46 @@ export default class AppClass extends React.Component {
     //xxBxxxxxx would be 2
     //must be an index 0-8
     
-    
-    if(x <= 2 && y <= 2 ) {
-      return (x, y)
-    } else return 0;
+    if (arr.indexOf('B') === 4) {
+      return (2, 2)
+    }
+     if (arr.indexOf('B') === 0 ) {
+      return (1, 1)
+    }
+    if (arr.indexOf('B') === 1 ) {
+      return (1, 2)
+    }
+    if (arr.indexOf('B') === 2 ) {
+      return (1, 3)
+    }
+    if (arr.indexOf('B') === 3 ) {
+      return (2, 1)
+    }
+    if (arr.indexOf('B') === 5 ) {
+      return (2, 3)
+    }
+    if (arr.indexOf('B') === 6 ) {
+      return (3, 1)
+    }
+    if (arr.indexOf('B') === 7 ) {
+      return (3, 2)
+    }
+    if (arr.indexOf('B') === 8 ) {
+      return (3, 2)
+    } 
+    // if(x <= 2 && y <= 2 ) {
+    //   return (x, y)
+    // } else return 0;
+
+    // return (x, y);
   }
 
-  getXYMessage = (x, y) => {
+  getXYMessage = () => {
     // It it not necessary to have a state to track the "Coordinates (2, 2)" message for the user.
     // You can use the `getXY` helper above to obtain the coordinates, and then `getXYMessage`
     // returns the fully constructed string.
 
-    this.getXY(x, y);
+    getXY();
     return `Coordinates ${x}, ${y}`
   }
 
@@ -61,31 +90,49 @@ export default class AppClass extends React.Component {
     // This helper takes a direction ("left", "up", etc) and calculates what the next index
     // of the "B" would be. If the move is impossible because we are at the edge of the grid,
     // this helper should return the current index unchanged.
+
+    if (direction === 'left') {
+
+    }
+
+    if (direction === 'up') {
+
+    }
+
+    if (direction === 'right') {
+
+    }
+
+    if (direction === 'down') {
+
+    }
+
   }
 
   move = (evt) => {
     // This event handler can use the helper above to obtain a new index for the "B",
     // and change any states accordingly.
+
+
   }
 
   onChange = (e) => {
     // You will need this to update the value of the input.
     const {value} = e.target;
-    this.setState(...this.state, [e.target.name]: value);
+  this.setState({...this.state, [e.target.name]: value} );
   }
 
   onSubmit = (evt) => {
     // Use a POST request to send a payload to the server.
-   // e.preventDefault();
-    // axios.post(URL);
-    //       .then(res => {
-    //         console.log(res.data)
-    //        { }
-    //
-    //       })
-    //       .catch(err => {
-    //         return console.log(`Error: `, err)
-    //       })
+   e.preventDefault();
+    axios.post(URL)
+          .then(res => {
+            this.setState({...this.setState, state: {index: res.data.index, steps: res.data.steps, email: res.data.email, message:res.data.message }})
+        
+          })
+          .catch(err => {
+            return console.log(`Error: `, err)
+          })
   }
 
   render() {
@@ -93,7 +140,7 @@ export default class AppClass extends React.Component {
     return (
       <div id="wrapper" className={className}>
         <div className="info">
-          <h3 id="coordinates">Coordinates (2, 2)</h3>
+          <h3 id="coordinatesz">Coordinates (2, 2)</h3>
           <h3 id="steps">You moved 0 times</h3>
         </div>
         <div id="grid">
