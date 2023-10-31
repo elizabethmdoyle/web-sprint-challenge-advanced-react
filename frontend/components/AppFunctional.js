@@ -113,9 +113,10 @@ export default function AppFunctional(props) {
    setEmailState(initialEmail);
    setStepsState(initialSteps);
    setIndexState(initialIndex);
+   console.log(reset)
   }
 
-  
+
 
   function getNextIndex(direction) {
     // This helper takes a direction ("left", "up", etc) and calculates what the next index
@@ -174,8 +175,23 @@ export default function AppFunctional(props) {
   function move(evt) {
     // This event handler can use the helper above to obtain a new index for the "B",
     // and change any states accordingly.
+    //need to set the move to the id of the selected button
+
+    //setting it to the target id will set the direction in the this.getNextIndex
+    //and once the state is set, the active square and color need to change to the next index
+    // or remain at the same one listed, which should be handled in that function
+    //the moves need to be counted and listed to the screen or the console??
     
-    this.setState({...this.state, indexState: this.getNextIndex(evt) })
+    this.setIndexState({indexState: this.getNextIndex(evt.target.id)})
+    //setIndexState(this.getNextIndex(evt.target.id))
+    // console.log(evt)
+     console.log(evt.target.id)
+
+     let count = 0;
+     for (let i = 0; i > evt.target.id; i++) {
+        return count++
+        console.log(`You moved ${count} times`)
+     }
   }
 
   function onChange(evt) {
@@ -187,17 +203,19 @@ export default function AppFunctional(props) {
 
   function onSubmit(evt) {
     // Use a POST request to send a payload to the server.
+    //the steps are going to come from the moves..??
     e.preventDefault(); 
     axios.post(URL, 
         {
-        "x" : x,
-        "y" : y,
+        "x" : 1,
+        "y" : 1,
         "steps": stepsState,
-        "email": emailState
+        "email": emailState, 
+        'message': messageState
     })
             .then(res => {
              //shape of object to be posted to the /results endpoint
-              console.log(res.data)
+              console.log(res)
               
             })
             .catch(err =>  {

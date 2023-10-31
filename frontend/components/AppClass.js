@@ -7,7 +7,7 @@ const initialEmail = ''
 const initialSteps = 0
 const initialIndex = 4 // the index the "B" is at
 
-const state = {
+const initialState = {
   message: initialMessage,
   email: initialEmail,
   index: initialIndex,
@@ -77,13 +77,14 @@ export default class AppClass extends React.Component {
     // You can use the `getXY` helper above to obtain the coordinates, and then `getXYMessage`
     // returns the fully constructed string.
 
-    getXY();
-    return `Coordinates ${x}, ${y}`
+    const coordinates = this.getXY();
+    return (`Coordinates ${coordinates}`)
   }
 
   reset = () => {
     // Use this helper to reset all states to their initial values.
     this.setState(initialState);
+    console.log('reset')
   }
 
   getNextIndex = (direction) => {
@@ -113,7 +114,15 @@ export default class AppClass extends React.Component {
     // This event handler can use the helper above to obtain a new index for the "B",
     // and change any states accordingly.
 
+    this.setState({...this.state, setIndexState: this.getNextIndex(evt.target.id) })
+    
 
+    let count = 0;
+    for (let i = 0; i > evt; i++) {
+       return count++
+    }
+
+    console.log(evt.target.id, count)
   }
 
   onChange = (e) => {
@@ -156,11 +165,11 @@ export default class AppClass extends React.Component {
           <h3 id="message"></h3>
         </div>
         <div id="keypad">
-          <button id="left">LEFT</button>
-          <button id="up">UP</button>
-          <button id="right">RIGHT</button>
-          <button id="down">DOWN</button>
-          <button id="reset">reset</button>
+          <button id="left" onClick={this.move}>LEFT</button>
+          <button id="up" onClick={this.move}>UP</button>
+          <button id="right" onClick={this.move}>RIGHT</button>
+          <button id="down" onClick={this.move}>DOWN</button>
+          <button id="reset" onClick={this.reset}>reset</button>
         </div>
         <form  >
           <input id="email" name="email" type="email" placeholder="type email" onChange={this.onChange}></input>
