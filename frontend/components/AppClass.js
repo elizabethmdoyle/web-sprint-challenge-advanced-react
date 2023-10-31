@@ -25,6 +25,9 @@ export default class AppClass extends React.Component {
     
   }
  
+  //where is the array coming from to select the active square?
+  //if the grid iteself if hard coded, do i need to recode it within my functions or simply use the document.getBy methods in order to access certain elements, like selecting and changing the active square
+  //with the current active square being 4, 
  
 
   getXY = (arr) => {
@@ -37,6 +40,8 @@ export default class AppClass extends React.Component {
     //xxxxBxxxx would be 5, but would return a 1.....? need to understand coding the logic
     //xxBxxxxxx would be 2
     //must be an index 0-8
+
+    console.log(arr)
     
     if (arr.indexOf('B') === 4) {
       return (2, 2)
@@ -65,11 +70,11 @@ export default class AppClass extends React.Component {
     if (arr.indexOf('B') === 8 ) {
       return (3, 2)
     } 
-    // if(x <= 2 && y <= 2 ) {
-    //   return (x, y)
-    // } else return 0;
+    if(x <= 2 && y <= 2 ) {
+      return (x, y)
+    } else return 0;
 
-    // return (x, y);
+    return (x, y);
   }
 
   getXYMessage = () => {
@@ -83,7 +88,12 @@ export default class AppClass extends React.Component {
 
   reset = () => {
     // Use this helper to reset all states to their initial values.
+
+    //need to also change the text to "You moved 0 times"
     this.setState(initialState);
+    let resetMoves = document.getElementById('steps');
+    resetMoves = `You moved ${initialSteps} times`
+    console.log(resetMoves)
     console.log('reset')
   }
 
@@ -91,6 +101,7 @@ export default class AppClass extends React.Component {
     // This helper takes a direction ("left", "up", etc) and calculates what the next index
     // of the "B" would be. If the move is impossible because we are at the edge of the grid,
     // this helper should return the current index unchanged.
+
 
     if (direction === 'left') {
 
@@ -113,6 +124,10 @@ export default class AppClass extends React.Component {
   move = (evt) => {
     // This event handler can use the helper above to obtain a new index for the "B",
     // and change any states accordingly.
+
+    //will need to change the active status square within this function
+
+    const activeSquare = document.getElementsByClassName('active');
 
     this.setState({...this.state, setIndexState: this.getNextIndex(evt.target.id) })
     
@@ -150,7 +165,7 @@ export default class AppClass extends React.Component {
       <div id="wrapper" className={className}>
         <div className="info">
           <h3 id="coordinatesz">Coordinates (2, 2)</h3>
-          <h3 id="steps">You moved 0 times</h3>
+          <h3 id="steps" onClick={this.getXY}>You moved 0 times</h3>
         </div>
         <div id="grid">
           {

@@ -5,7 +5,7 @@ import AppFunctional from './AppFunctional';
 
 // Write your tests here
 test('sanity', () => {
-  expect(true).toBe(false)
+  expect(true).toBe(true)
 })
 
 test('AppClass rendering', () => {
