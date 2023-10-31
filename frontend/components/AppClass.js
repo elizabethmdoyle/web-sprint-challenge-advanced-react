@@ -127,15 +127,24 @@ export default class AppClass extends React.Component {
 
     //will need to change the active status square within this function
 
+    //get active square
     const activeSquare = document.getElementsByClassName('active');
-
-    this.setState({...this.state, setIndexState: this.getNextIndex(evt.target.id) })
+    //get buttons
+    const left = document.getElementById('left');
+    const right = document.getElementById('right'); 
+    const down = document.getElementById('down');
+    const up = document.getElementById('up');
     
+//set up a count...
+    var count = initialSteps;
 
-    let count = 0;
-    for (let i = 0; i > evt; i++) {
-       return count++
-    }
+    document.addEventListener(click, () => {
+      count++
+    })
+  
+    this.setState({...this.state, setIndexState: this.getNextIndex(evt.target.id) })
+
+    console.log(count)
 
     console.log(evt.target.id, count)
   }
