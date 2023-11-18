@@ -6,51 +6,58 @@ const initialMessage = ''
 const initialEmail = ''
 const initialSteps = 0
 const initialIndex = 4 // the index the "B" is at
+const errMessage = ''
 
 const URL = `http://localhost:9000/api/result`;
 
-export default function AppFunctional(props) {
+export default function AppFunctional({className}) {
   // THE FOLLOWING HELPERS ARE JUST RECOMMENDATIONS.
   // You can delete them and build your own logic from scratch.
 
-  const [messageState, setMessageState] = useState(initialMessage);
-  const [emailState, setEmailState] = useState(initialEmail);
-  const [stepsState, setStepsState] = useState(initialSteps);
-  const [indexState, setIndexState] = useState(initialIndex);
+  const [message, setMessageState] = useState(initialMessage);
+  const [email, setEmailState] = useState(initialEmail);
+  const [steps, setStepsState] = useState(initialSteps);
+  const [index, setIndexState] = useState(initialIndex);
+  const [errorMessage, setErrorMessage] = useState(errMessage)
 
 
-  function getXY(indexState) {
+  const getXY = () => {
     // It it not necessary to have a state to track the coordinates.
     // It's enough to know what index the "B" is at, to be able to calculate them.
 
     //will take in one parameter, the index of B || an array of xxxxBxxxx
     //base case should show B at index 4 (the center of the grid)
-      if (indexState === 4) {
-        return (2, 2)
-      }
-       if (indexState === 0 ) {
-        return (1, 1)
-      }
-      if (indexState === 1 ) {
-        return (1, 2)
-      }
-      if (indexState === 2 ) {
-        return (1, 3)
-      }
-      if (indexState === 3 ) {
-        return (2, 1)
-      }
-      if (indexState === 5 ) {
-        return (2, 3)
-      }
-      if (indexState === 6 ) {
-        return (3, 1)
-      }
-      if (indexState === 7 ) {
-        return (3, 2)
-      }
-      if (indexState === 8 ) {
-        return (3, 2)
+
+    const x = (index % 3) + 1;
+    const y = Math.floor(index / 3) + 1;
+    return { x, y };
+
+      // if (indexState === 4) {
+      //   return (2, 2)
+      // }
+      //  if (indexState === 0 ) {
+      //   return (1, 1)
+      // }
+      // if (indexState === 1 ) {
+      //   return (1, 2)
+      // }
+      // if (indexState === 2 ) {
+      //   return (1, 3)
+      // }
+      // if (indexState === 3 ) {
+      //   return (2, 1)
+      // }
+      // if (indexState === 5 ) {
+      //   return (2, 3)
+      // }
+      // if (indexState === 6 ) {
+      //   return (3, 1)
+      // }
+      // if (indexState === 7 ) {
+      //   return (3, 2)
+      // }
+      // if (indexState === 8 ) {
+      //   return (3, 2)
       } 
 
     //need 3 if statements, if i = 1-3, coord == 1-3, 
@@ -98,27 +105,28 @@ export default function AppFunctional(props) {
     
   }
 
-  function getXYMessage() {
+  const getXYMessage = () => {
     // It it not necessary to have a state to track the "Coordinates (2, 2)" message for the user.
     // You can use the `getXY` helper above to obtain the coordinates, and then `getXYMessage`
     // returns the fully constructed string.
 
-    const coordinates = this.getXY();
-    return (`Coordinates ${coordinates}`)
+    const { x, y } = getXY();
+    return `(${x}, ${y})`;
   }
 
-  function reset() {
+  const reset = () => {
     // Use this helper to reset all states to their initial values.
    setMessageState(initialMessage);
    setEmailState(initialEmail);
    setStepsState(initialSteps);
    setIndexState(initialIndex);
+   setErrorMessage(errMessage);
    console.log(reset)
   }
 
 
 
-  function getNextIndex(direction) {
+  const getNextIndex =  (direction) => {
     // This helper takes a direction ("left", "up", etc) and calculates what the next index
     // of the "B" would be. If the move is impossible because we are at the edge of the grid,
     // this helper should return the current index unchanged.
@@ -168,11 +176,38 @@ export default function AppFunctional(props) {
 
     //}
     
+    let nextIndex = index;
 
+    switch (direction) {
+      case 'left':
+        if (index % 3 !== 0) {
+          nextIndex = index - 1;
+        }
+        break;
+      case 'up':
+        if (index > 2) {
+          nextIndex = index - 3;
+        }
+        break;
+      case 'right':
+        if (index % 3 !== 2) {
+          nextIndex = index + 1;
+        }
+        break;
+      case 'down':
+        if (index < 6) {
+          nextIndex = index + 3;
+        }
+        break;
+      default:
+        break;
+    }
+
+    return nextIndex;
 
   }
 
-  function move(evt) {
+  const move = (evt) => {
     // This event handler can use the helper above to obtain a new index for the "B",
     // and change any states accordingly.
     //need to set the move to the id of the selected button
@@ -182,77 +217,119 @@ export default function AppFunctional(props) {
     // or remain at the same one listed, which should be handled in that function
     //the moves need to be counted and listed to the screen or the console??
     
-    this.setIndexState({indexState: this.getNextIndex(evt.target.id)})
-    //setIndexState(this.getNextIndex(evt.target.id))
+    const direction = evt.target.id;
+    const nextIndex = getNextIndex(direction)
+    let cantGoMessage = ''
+
+    if (nextIndex !== index) {
+      setIndex(nextIndex)
+      setSteps(steps + 1)
+    } else {
+      switch (direction) {
+        case 'left':
+          cantGoMessage = "You can't go left";
+          break;
+        case 'up':
+          cantGoMessage = "You can't go up";
+          break;
+        case 'right':
+          cantGoMessage = "You can't go right";
+          break;
+        case 'down':
+          cantGoMessage = "You can't go down";
+          break;
+        default:
+          break;
+      }
+      setMessage( cantGoMessage)
+    
+
+//setIndexState(this.getNextIndex(evt.target.id))
     // console.log(evt)
-     console.log(evt.target.id)
+    //  console.log(evt.target.id)
 
-     let count = 0;
-     for (let i = 0; i > evt.target.id; i++) {
-        return count++
-        console.log(`You moved ${count} times`)
-     }
+    //  let count = 0;
+    //  for (let i = 0; i > evt.target.id; i++) {
+    //     return count++
+    //     console.log(`You moved ${count} times`)
+    //  }
   }
 
-  function onChange(evt) {
+  const onChange = (evt) => {
     // You will need this to update the value of the input.
-    const {value} = evt.target;
-    return setEmailState({emailState: value}) 
+    const { id, value } = evt.target;
+    if (id === 'email') {
+      setEmail(value);
+    }
 
   }
 
-  function onSubmit(evt) {
+  const onSubmit = (evt) => {
     // Use a POST request to send a payload to the server.
     //the steps are going to come from the moves..??
-    e.preventDefault(); 
-    axios.post(URL, 
-        {
-        "x" : 1,
-        "y" : 1,
-        "steps": stepsState,
-        "email": emailState, 
-        'message': messageState
-    })
-            .then(res => {
-             //shape of object to be posted to the /results endpoint
-              console.log(res)
-              
-            })
-            .catch(err =>  {
-                return console.log(err, ':error from onSubmit post request')}
-            )
+    evt.preventDefault();
+    const x = (index % 3) + 1;
+    const y = Math.floor(index / 3) + 1;
 
-  }
+    const payload = {
+      x: x,
+      y: y,
+      steps: steps,
+      email: email,
+    }
 
+    axios.post('http://localhost:9000/api/result', payload)
+      .then(res => {
+        setMessage(res.data.message)
+      })
+      .catch(err => {
+        setMessage(err.response.data.message);
+// err.response.data.message
+      })
+
+      setEmail(initialEmail)
+  
+    }
   return (
     <div id="wrapper" className={props.className}>
       <div className="info">
-        <h3 id="coordinates">Coordinates (2, 2)</h3>
-        <h3 id="steps">You moved 0 times</h3>
+        <h3 id="coordinates">{`Coordinates ${getXYMessage()}`}</h3>
+        <h3 id="steps">You moved {steps} {steps !== 1 ? 'times' : 'time'}</h3>
       </div>
       <div id="grid">
         {
           [0, 1, 2, 3, 4, 5, 6, 7, 8].map(idx => (
-            <div key={idx} className={`square${idx === 4 ? ' active' : ''}`}>
-              {idx === 4 ? 'B' : null}
+            <div key={idx} className={`square${idx === index ? ' active' : ''}`}>
+              {idx === index ? 'B' : null}
             </div>
           ))
         }
       </div>
       <div className="info">
-        <h3 id="message"></h3>
+        <h3 id="message">{errorMessage}</h3>
       </div>
       <div id="keypad">
-        <button id="left" onClick={move}>LEFT</button>
-        <button id="up" onClick={move}>UP</button>
-        <button id="right"onClick={move}>RIGHT</button>
-        <button id="down"onClick={move}>DOWN</button>
-        <button id="reset" onClick={reset}>reset</button>
+      <button onClick={() => move('left')} id="left">
+          LEFT
+        </button>
+        <button onClick={() => move('up')} id="up">
+          UP
+        </button>
+        <button onClick={() => move('right')} id="right">
+          RIGHT
+        </button>
+        <button onClick={() => move('down')} id="down">
+          DOWN
+        </button>
+        <button onClick={reset} id="reset">
+          reset
+        </button>
       </div>
       <form onSubmit={onSubmit}>
-        <input id="email" type="email" placeholder="type email" onChange={onChange}></input>
-        <input id="submit" type="submit"></input>
+        <input id="email" type="email" placeholder="type email" value={email} onChange={onChange}></input>
+        <input id="submit" type="submit" value="Submit"></input>
       </form>
     </div>
   )
-}
+      
+      }
