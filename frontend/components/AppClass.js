@@ -44,49 +44,28 @@ export default class AppClass extends React.Component {
     //xxBxxxxxx would be 2
     //must be an index 0-8
 
-    console.log(arr)
+    const x = (this.state.index % 3) + 1;
+    const y = Math.floor(this.state.index / 3) + 1;
+    return {x,y};
     
-    if (arr.indexOf('B') === 4) {
-      return (2, 2)
+      // if (this.state.index === 0) return 'Coordinates (1,1)';
+      // if (this.state.index === 1) return 'Coordinates (2,1)';
+      // if (this.state.index === 2) return 'Coordinates (3,1)';
+      // if (this.state.index === 3) return 'Coordinates (1,2)';
+      // if (this.state.index === 4) return 'Coordinates (2,2)';
+      // if (this.state.index === 5) return 'Coordinates (3,2)';
+      // if (this.state.index === 6) return 'Coordinates (1,3)';
+      // if (this.state.index === 7) return 'Coordinates (2,3)';
+      // if (this.state.index === 8) return 'Coordinates (3,3)';
     }
-     if (arr.indexOf('B') === 0 ) {
-      return (1, 1)
-    }
-    if (arr.indexOf('B') === 1 ) {
-      return (1, 2)
-    }
-    if (arr.indexOf('B') === 2 ) {
-      return (1, 3)
-    }
-    if (arr.indexOf('B') === 3 ) {
-      return (2, 1)
-    }
-    if (arr.indexOf('B') === 5 ) {
-      return (2, 3)
-    }
-    if (arr.indexOf('B') === 6 ) {
-      return (3, 1)
-    }
-    if (arr.indexOf('B') === 7 ) {
-      return (3, 2)
-    }
-    if (arr.indexOf('B') === 8 ) {
-      return (3, 2)
-    } 
-    if(x <= 2 && y <= 2 ) {
-      return (x, y)
-    } else return 0;
-
-    return (x, y);
-  }
 
   getXYMessage = () => {
     // It it not necessary to have a state to track the "Coordinates (2, 2)" message for the user.
     // You can use the `getXY` helper above to obtain the coordinates, and then `getXYMessage`
     // returns the fully constructed string.
 
-    const coordinates = this.getXY();
-    return (`Coordinates ${coordinates}`)
+    const {x, y} = this.getXY();
+    return (`Coordinates ${x}, ${y}`)
   }
 
   reset = () => {
@@ -106,21 +85,20 @@ export default class AppClass extends React.Component {
     // this helper should return the current index unchanged.
 
 
-    if (direction === 'left') {
-
-    }
-
-    if (direction === 'up') {
-
-    }
-
-    if (direction === 'right') {
-
-    }
-
-    if (direction === 'down') {
-
-    }
+    let { index } = this.state;
+    
+      switch (direction) {
+        case 'left':
+          return index % 3 !== 0 ? index - 1 : index;
+        case 'up':
+          return index >= 3 ? index - 3 : index;
+        case 'right':
+          return index % 3 !== 2 ? index + 1 : index;
+        case 'down':
+          return index < 6 ? index + 3 : index;
+        default:
+          return index;
+      }
 
   }
 
@@ -131,53 +109,78 @@ export default class AppClass extends React.Component {
     //will need to change the active status square within this function
 
     //get active square
-    const activeSquare = document.getElementsByClassName('active');
+    // const activeSquare = document.getElementsByClassName('active');
     //get buttons
-    const left = document.getElementById('left');
-    const right = document.getElementById('right'); 
-    const down = document.getElementById('down');
-    const up = document.getElementById('up');
+    // const left = document.getElementById('left');
+    // const right = document.getElementById('right'); 
+    // const down = document.getElementById('down');
+    // const up = document.getElementById('up');
+
+    const direction = evt.target.id
+    const newDirection = this.getNextIndex(direction, this.state.index)
+
+    let errorMessage = ''
     
-//set up a count...
-    var count = initialSteps;
-
-    document.addEventListener(click, () => {
-      count++
-    })
   
-    this.setState({...this.state, setIndexState: this.getNextIndex(evt.target.id) })
+    if (newDirection !== this.state.index) {
+      this.setState({
+        ...this.state,
+        steps: this.state.steps + 1,
+        index: newDirection,
+        errorMessage, 
+      });
+    } else {
+      
+      switch (direction) {
+        case 'left':
+          errorMessage = "You can't go left";
+          break;
+        case 'right':
+          errorMessage = "You can't go right";
+          break;
+        case 'up':
+          errorMessage = "You can't go up";
+          break;
+        case 'down':
+          errorMessage = "You can't go down";
+          break;
+        default:
+          errorMessage = 'Invalid move';
+      }
+      this.setState({ ...this.state, errorMessage });
+    }
 
-    console.log(count)
-
-    console.log(evt.target.id, count)
   }
 
   onChange = (e) => {
     // You will need this to update the value of the input.
-    const {value} = e.target;
-  this.setState({...this.state, [e.target.name]: value} );
+    const {id, value} = e.target;
+  this.setState({...this.state, [id]: value} );
   }
 
   onSubmit = (evt) => {
     // Use a POST request to send a payload to the server.
    e.preventDefault();
-    axios.post(URL)
-          .then(res => {
-            this.setState({...this.setState, state: {index: res.data.index, steps: res.data.steps, email: res.data.email, message:res.data.message }})
-        
-          })
+   const {x, y} = this.getXY();
+
+    axios.post(URL, {...this.state, x, y})
+          .then((res) => {
+            this.setState({...this.setState, email: initialEmail, message:res.data.message })
+console.log(res.data.message);
+  })
           .catch(err => {
             return console.log(`Error: `, err)
           })
   }
 
   render() {
+    const {errorMessage} = this.state
     const { className } = this.props
     return (
       <div id="wrapper" className={className}>
         <div className="info">
-          <h3 id="coordinatesz">{`Coordinates ${this.state.getXYMessage()}`}</h3>
-          <h3 id="steps" onClick={this.getXY}>{`You moved ${this.state.steps} times`}</h3>
+          <h3 id="coordinates">{`Coordinates ${this.getXYMessage()}`}</h3>
+          <h3 id="steps">You moved {this.state.steps} {this.state.steps ==! 1 ? 'times' : 'time'} </h3>
         </div>
         <div id="grid">
           {
@@ -189,7 +192,7 @@ export default class AppClass extends React.Component {
           }
         </div>
         <div className="info">
-          <h3 id="message">{this.state.message}</h3>
+          <h3 id="message">{errorMessage}</h3>
         </div>
         <div id="keypad">
           <button id="left" onClick={this.move}>LEFT</button>
@@ -199,7 +202,7 @@ export default class AppClass extends React.Component {
           <button id="reset" onClick={this.reset}>reset</button>
         </div>
         <form onSubmit={this.onSubmit} >
-          <input id="email" name="email" type="email" placeholder="type email" onChange={this.onChange}></input>
+          <input id="email" name="email" type="email" placeholder="type email" value={this.state.email} onChange={this.onChange}></input>
           <input id="submit" type="submit"></input>
         </form>
       </div>
