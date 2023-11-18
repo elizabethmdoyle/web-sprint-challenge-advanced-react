@@ -6,12 +6,14 @@ const initialMessage = ''
 const initialEmail = ''
 const initialSteps = 0
 const initialIndex = 4 // the index the "B" is at
+const errMessage = ''
 
 const initialState = {
   message: initialMessage,
   email: initialEmail,
   index: initialIndex,
-  steps: initialSteps
+  steps: initialSteps,
+  errorMessage: errMessage
   
 }
 
@@ -22,6 +24,7 @@ export default class AppClass extends React.Component {
   // You can delete them and build your own logic from scratch.
   constructor() {
     super();
+    this.state = initialState
     
   }
  
@@ -30,7 +33,7 @@ export default class AppClass extends React.Component {
   //with the current active square being 4, 
  
 
-  getXY = (arr) => {
+  getXY = () => {
     // It it not necessary to have a state to track the coordinates.
     // It's enough to know what index the "B" is at, to be able to calculate them.
     
@@ -173,20 +176,20 @@ export default class AppClass extends React.Component {
     return (
       <div id="wrapper" className={className}>
         <div className="info">
-          <h3 id="coordinatesz">Coordinates (2, 2)</h3>
-          <h3 id="steps" onClick={this.getXY}>You moved 0 times</h3>
+          <h3 id="coordinatesz">{`Coordinates ${this.state.getXYMessage()}`}</h3>
+          <h3 id="steps" onClick={this.getXY}>{`You moved ${this.state.steps} times`}</h3>
         </div>
         <div id="grid">
           {
             [0, 1, 2, 3, 4, 5, 6, 7, 8].map(idx => (
-              <div key={idx} className={`square${idx === 4 ? ' active' : ''}`}>
-                {idx === 4 ? 'B' : null}
+              <div key={idx} className={`square${idx === this.state.index ? ' active' : ''}`}>
+                {idx === this.state.index ? 'B' : null}
               </div>
             ))
           }
         </div>
         <div className="info">
-          <h3 id="message"></h3>
+          <h3 id="message">{this.state.message}</h3>
         </div>
         <div id="keypad">
           <button id="left" onClick={this.move}>LEFT</button>
@@ -195,7 +198,7 @@ export default class AppClass extends React.Component {
           <button id="down" onClick={this.move}>DOWN</button>
           <button id="reset" onClick={this.reset}>reset</button>
         </div>
-        <form  >
+        <form onSubmit={this.onSubmit} >
           <input id="email" name="email" type="email" placeholder="type email" onChange={this.onChange}></input>
           <input id="submit" type="submit"></input>
         </form>
