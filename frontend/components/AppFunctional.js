@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 
 // Suggested initial states
@@ -103,7 +103,7 @@ export default function AppFunctional({className}) {
     // } 
     //return (x, y)
     
-  }
+  
 
   const getXYMessage = () => {
     // It it not necessary to have a state to track the "Coordinates (2, 2)" message for the user.
@@ -207,7 +207,7 @@ export default function AppFunctional({className}) {
 
   }
 
-  const move = (evt) => {
+  const move = (direction) => {
     // This event handler can use the helper above to obtain a new index for the "B",
     // and change any states accordingly.
     //need to set the move to the id of the selected button
@@ -217,32 +217,34 @@ export default function AppFunctional({className}) {
     // or remain at the same one listed, which should be handled in that function
     //the moves need to be counted and listed to the screen or the console??
     
-    const direction = evt.target.id;
-    const nextIndex = getNextIndex(direction)
-    let cantGoMessage = ''
+    const newDirection = getNextIndex(direction);
 
-    if (nextIndex !== index) {
-      setIndex(nextIndex)
-      setSteps(steps + 1)
+    if (newDirection !== index) {
+      setStepsState(steps + 1);
+      setIndexState(newDirection);
+      setErrorMessage('');
     } else {
+      let errorMessage = '';
+
       switch (direction) {
         case 'left':
-          cantGoMessage = "You can't go left";
-          break;
-        case 'up':
-          cantGoMessage = "You can't go up";
+          errorMessage = "You can't go left";
           break;
         case 'right':
-          cantGoMessage = "You can't go right";
+          errorMessage = "You can't go right";
+          break;
+        case 'up':
+          errorMessage = "You can't go up";
           break;
         case 'down':
-          cantGoMessage = "You can't go down";
+          errorMessage = "You can't go down";
           break;
         default:
-          break;
+          errorMessage = 'Invalid move';
       }
-      setMessage( cantGoMessage)
-    
+
+      setErrorMessage(errorMessage);
+    }
 
 //setIndexState(this.getNextIndex(evt.target.id))
     // console.log(evt)
@@ -259,7 +261,7 @@ export default function AppFunctional({className}) {
     // You will need this to update the value of the input.
     const { id, value } = evt.target;
     if (id === 'email') {
-      setEmail(value);
+      setEmailState(value);
     }
 
   }
@@ -276,22 +278,25 @@ export default function AppFunctional({className}) {
       y: y,
       steps: steps,
       email: email,
+      message: message
     }
 
     axios.post('http://localhost:9000/api/result', payload)
       .then(res => {
-        setMessage(res.data.message)
+        setMessageState(res.data.message)
       })
       .catch(err => {
-        setMessage(err.response.data.message);
+        setMessageState(err.response.data.message);
 // err.response.data.message
       })
 
-      setEmail(initialEmail)
+      setEmailState(initialEmail)
   
     }
+    
+
   return (
-    <div id="wrapper" className={props.className}>
+    <div id="wrapper" className={className}>
       <div className="info">
         <h3 id="coordinates">{`Coordinates ${getXYMessage()}`}</h3>
         <h3 id="steps">You moved {steps} {steps !== 1 ? 'times' : 'time'}</h3>
@@ -332,4 +337,5 @@ export default function AppFunctional({className}) {
     </div>
   )
       
+
       }
