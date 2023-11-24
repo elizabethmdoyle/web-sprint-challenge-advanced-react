@@ -263,9 +263,21 @@ export default function AppFunctional({className}) {
     // Use a POST request to send a payload to the server.
     //the steps are going to come from the moves..??
     evt.preventDefault();
-    axios
-    .post(URL, { message, email, index, steps, x, y })
+    
+
+    const x = (index % 3) + 1;
+    const y = Math.floor(index / 3) + 1;
+
+    const payload = {
+      x: x,
+      y: y,
+      steps: steps,
+      email: email,
+    }
+
+    axios.post('http://localhost:9000/api/result', payload)
     .then((resp) => {
+      setMessageState(resp.data.message)
       setEmailState(initialEmail);
       setErrorMessage(resp.data.message);
       console.log(resp.data.message);
