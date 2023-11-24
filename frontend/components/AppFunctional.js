@@ -21,6 +21,8 @@ export default function AppFunctional({className}) {
   const [errorMessage, setErrorMessage] = useState(errMessage)
 
 
+  
+
   const getXY = () => {
     // It it not necessary to have a state to track the coordinates.
     // It's enough to know what index the "B" is at, to be able to calculate them.
@@ -180,31 +182,22 @@ export default function AppFunctional({className}) {
 
     switch (direction) {
       case 'left':
-        if (index % 3 !== 0) {
-          nextIndex = index - 1;
-        }
+        nextIndex = index % 3 !== 0 ? index - 1 : index;
         break;
       case 'up':
-        if (index > 2) {
-          nextIndex = index - 3;
-        }
+        nextIndex = index >= 3 ? index - 3 : index;
         break;
       case 'right':
-        if (index % 3 !== 2) {
-          nextIndex = index + 1;
-        }
+        nextIndex = index % 3 !== 2 ? index + 1 : index;
         break;
       case 'down':
-        if (index < 6) {
-          nextIndex = index + 3;
-        }
+        nextIndex = index < 6 ? index + 3 : index;
         break;
       default:
         break;
     }
 
     return nextIndex;
-
   }
 
   const move = (direction) => {
@@ -213,7 +206,7 @@ export default function AppFunctional({className}) {
     //need to set the move to the id of the selected button
 
     //setting it to the target id will set the direction in the this.getNextIndex
-    //and once the state is set, the active square and color need to change to the next index
+    //and once the state is set, the a6ctive square and color need to change to the next index
     // or remain at the same one listed, which should be handled in that function
     //the moves need to be counted and listed to the screen or the console??
     
@@ -270,28 +263,16 @@ export default function AppFunctional({className}) {
     // Use a POST request to send a payload to the server.
     //the steps are going to come from the moves..??
     evt.preventDefault();
-    const x = (index % 3) + 1;
-    const y = Math.floor(index / 3) + 1;
-
-    const payload = {
-      x: x,
-      y: y,
-      steps: steps,
-      email: email,
-      message: message
-    }
-
-    axios.post('http://localhost:9000/api/result', payload)
-      .then(res => {
-        setMessageState(res.data.message)
-      })
-      .catch(err => {
-        setMessageState(err.response.data.message);
-// err.response.data.message
-      })
-
-      setEmailState(initialEmail)
-  
+    axios
+    .post(URL, { message, email, index, steps, x, y })
+    .then((resp) => {
+      setEmailState(initialEmail);
+      setErrorMessage(resp.data.message);
+      console.log(resp.data.message);
+    })
+    .catch((err) => {
+      setErrorMessage(err.response.data.message);
+    });
     }
     
 

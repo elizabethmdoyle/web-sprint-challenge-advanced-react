@@ -165,7 +165,7 @@ export default class AppClass extends React.Component {
 
     axios.post(URL, {...this.state, x, y})
           .then((res) => {
-            this.setState({...this.setState, email: initialEmail, message:res.data.message })
+            this.setState({...this.setState, email: initialEmail, message: res.data.message })
 console.log(res.data.message);
   })
           .catch(err => {
@@ -179,7 +179,7 @@ console.log(res.data.message);
     return (
       <div id="wrapper" className={className}>
         <div className="info">
-          <h3 id="coordinates">{`Coordinates ${this.getXYMessage()}`}</h3>
+          <h3 id="coordinates">{` ${this.getXYMessage()}`}</h3>
           <h3 id="steps">You moved {this.state.steps} {this.state.steps ==! 1 ? 'time' : 'times'} </h3>
         </div>
         <div id="grid">
